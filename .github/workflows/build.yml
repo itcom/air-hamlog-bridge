@@ -1,10 +1,13 @@
-name: "Submit to Web Store"
+name: Build
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
-  submit:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,11 +25,8 @@ jobs:
       - name: Build
         run: yarn build
 
-      - name: Package
-        run: yarn package
-
-      - name: Submit to Web Store
-        uses: PlasmoHQ/bpp@v3
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
-          keys: ${{ secrets.SUBMIT_KEYS }}
-          artifact: build/chrome-mv3-prod.zip
+          name: chrome-extension
+          path: build/chrome-mv3-prod
