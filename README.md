@@ -1,33 +1,61 @@
-This is a [Plasmo extension](https://docs.plasmo.com/) project bootstrapped with [`plasmo init`](https://www.npmjs.com/package/plasmo).
+# HAMLAB Bridge
 
-## Getting Started
+WSJT-X / JTDX から送信される ADIF データを [HAMLAB](https://hamlab.jp/) に自動入力する Chrome 拡張機能です。
 
-First, run the development server:
+## 機能
+
+- ローカルの HAMLAB Bridge サーバーから WebSocket 経由で ADIF を受信
+- HAMLAB のログ入力フォームに自動入力
+  - コールサイン、日付、時刻、周波数、RST、モード、グリッドロケーター 等
+- JCC/JCG、QTH、Grid（高精度）、オペレーター名の補完に対応
+- 確認ダイアログの表示/非表示を選択可能
+- 設備情報（無線機、アンテナ、地上高）の自動入力
+
+## 必要なもの
+
+- HAMLAB Bridge サーバー（`ws://127.0.0.1:17800/ws` で待ち受け）
+- Chrome / Edge などの Chromium 系ブラウザ
+
+## インストール
+
+### リリース版
+
+1. [Releases](../../releases) ページから最新の `hamlab-bridge-vX.X.X.zip` をダウンロード
+2. zip を展開
+3. Chrome で `chrome://extensions` を開く
+4. 右上の「デベロッパーモード」を有効にする
+5. 「パッケージ化されていない拡張機能を読み込む」をクリック
+6. 展開した `chrome-mv3-prod` フォルダを選択
+
+### 開発版
 
 ```bash
-pnpm dev
-# or
-npm run dev
+yarn install
+yarn dev
 ```
 
-Open your browser and load the appropriate development build. For example, if you are developing for the chrome browser, using manifest v3, use: `build/chrome-mv3-dev`.
+`build/chrome-mv3-dev` をブラウザの拡張機能ページで読み込んでください。
 
-You can start editing the popup by modifying `popup.tsx`. It should auto-update as you make changes. To add an options page, simply add a `options.tsx` file to the root of the project, with a react component default exported. Likewise to add a content page, add a `content.ts` file to the root of the project, importing some module and do some logic, then reload the extension on your browser.
-
-For further guidance, [visit our Documentation](https://docs.plasmo.com/)
-
-## Making production build
-
-Run the following:
+### 本番ビルド
 
 ```bash
-pnpm build
-# or
-npm run build
+yarn build
 ```
 
-This should create a production bundle for your extension, ready to be zipped and published to the stores.
+`build/chrome-mv3-prod` が生成されます。
 
-## Submit to the webstores
+## 設定
 
-The easiest way to deploy your Plasmo extension is to use the built-in [bpp](https://bpp.browser.market) GitHub action. Prior to using this action however, make sure to build your extension and upload the first version to the store to establish the basic credentials. Then, simply follow [this setup instruction](https://docs.plasmo.com/framework/workflows/submit) and you should be on your way for automated submission!
+拡張機能のオプションページから以下を設定できます。
+
+| 項目 | 説明 |
+|------|------|
+| 確認ダイアログ | 登録前に確認ダイアログを表示するか |
+| Remarks1 | 固定で入力する文言 |
+| 無線機 | 無線機名（例: IC-7300） |
+| アンテナ | アンテナ名（例: ZS6BKW） |
+| 地上高 | アンテナ地上高（m） |
+
+## ライセンス
+
+MIT
