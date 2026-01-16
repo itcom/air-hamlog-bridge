@@ -1,5 +1,5 @@
-import type { PlasmoCSConfig } from "plasmo"
 import { Storage } from "@plasmohq/storage"
+import type { PlasmoCSConfig } from "plasmo"
 
 const storage = new Storage()
 
@@ -13,6 +13,7 @@ export const config: PlasmoCSConfig = {
 type BridgeMessage =
     | string
     | {
+        type?: "adif"
         adif?: string
         geo?: {
             jcc?: string
@@ -23,8 +24,28 @@ type BridgeMessage =
             operator?: string
         }
     }
+    | {
+        type: "rig"
+        data: boolean
+        freq: number
+        mode: string
+        rig: string
+    }
 
 chrome.runtime.onMessage.addListener((msg: BridgeMessage) => {
+
+    // rigタイプのメッセージ処理
+    if (typeof msg !== "string" && msg.type === "rig") {
+        // Hz → MHz変換
+        const freqMHz = (msg.freq / 1000000).toFixed(3)
+        set("#frequency", freqMHz)
+        // モード変換
+        const mappedMode = mapMode(msg.mode)
+        if (mappedMode) {
+            set("#mode", mappedMode)
+        }
+        return
+    }
 
     const adif = typeof msg === "string" ? msg : msg.adif
     if (!adif) return
@@ -61,6 +82,39 @@ chrome.runtime.onMessage.addListener((msg: BridgeMessage) => {
 
     handleSubmit(data)
 })
+
+/* -------------------------
+ * Mode mapping
+ * ------------------------- */
+
+const MODE_MAP: Record<string, string> = {
+    "FM": "FM",
+    "FM-N": "FM",
+    "WFM": "FM",
+    "AM": "AM",
+    "AM-N": "AM",
+    "SSB": "SSB",
+    "USB": "SSB",
+    "LSB": "SSB",
+    "CW": "CW",
+    "CW-R": "CW",
+    "CW-U": "CW",
+    "RTTY": "RTTY",
+    "RTTY-R": "RTTY",
+    "RTTY-LSB": "RTTY",
+    "RTTY-USB": "RTTY",
+    "FT8": "FT8",
+    "FT4": "FT4",
+    "DV": "DV",
+    "D-STAR (DV)": "D-STAR (DV)",
+    "D-STAR (DR)": "D-STAR (DR)",
+    "C4FM": "C4FM",
+    "WIRES-X": "WIRES-X",
+}
+
+function mapMode(mode: string): string | undefined {
+    return MODE_MAP[mode]
+}
 
 /* -------------------------
  * ADIF utilities
