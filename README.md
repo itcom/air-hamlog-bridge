@@ -1,15 +1,16 @@
-# HAMLAB Bridge
+# AirHamLog Bridge
 
-WSJT-X / JTDX から送信される ADIF データを [HAMLAB](https://hamlab.jp/) に自動入力する Chrome 拡張機能です。
+WSJT-X / JTDX から送信される ADIF データを [AirHamLog](https://air-hamlog.com/) に自動入力する Chrome 拡張機能です。
 
 ## 機能
 
 - ローカルの HAMLAB Bridge サーバーから WebSocket 経由で ADIF を受信
-- HAMLAB のログ入力フォームに自動入力
+- AirHamLog のログ入力フォームに自動入力
   - コールサイン、日付、時刻、周波数、RST、モード、グリッドロケーター 等
 - JCC/JCG、QTH、Grid（高精度）、オペレーター名の補完に対応
+- **受信QTHの自動選択** - 相手のQTH（例: `2901`）が補完された場合、完全一致する候補（例: `JCC2901:`）が自動的に選択されます
 - 確認ダイアログの表示/非表示を選択可能
-- 設備情報（無線機、アンテナ、地上高）の自動入力
+- カード交換、QSLカード用Remarks、固定メモの自動入力
 
 ## 必要なもの
 
@@ -53,10 +54,9 @@ yarn build
 | 項目 | 説明 |
 |------|------|
 | 確認ダイアログ | 登録前に確認ダイアログを表示するか |
-| Remarks1 | 固定で入力する文言 |
-| 無線機 | 無線機名（例: IC-7300） |
-| アンテナ | アンテナ名（例: ZS6BKW） |
-| 地上高 | アンテナ地上高（m） |
+| カード交換 | QSLカードの交換方法（JARL Bureau / No Card / 1WAY 等） |
+| Remarks（QSLカード用） | QSLカードに印字される文言 |
+| Remarks1（固定入力） | 毎回メモ欄に自動追加される文言 |
 
 ## ライセンス
 
