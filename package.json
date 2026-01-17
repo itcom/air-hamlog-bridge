@@ -1,8 +1,8 @@
 {
-  "name": "hamlab-bridge",
-  "displayName": "Hamlab bridge",
+  "name": "air-hamlog-bridge",
+  "displayName": "AirHamLog Bridge",
   "version": "0.0.1",
-  "description": "Send WSJT-X/JTDX ADIF to HAMLAB automatically",
+  "description": "Send WSJT-X/JTDX ADIF to AirHamLog automatically",
   "author": "okuyama@itcom.ne.jp",
   "scripts": {
     "dev": "plasmo dev",

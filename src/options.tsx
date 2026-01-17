@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react"
 import { Storage } from "@plasmohq/storage"
+import { useEffect, useState } from "react"
 
 const storage = new Storage()
 
@@ -62,7 +62,43 @@ const styles = {
         boxSizing: "border-box" as const,
         transition: "border-color 0.2s",
     },
+    select: {
+        width: "100%",
+        padding: "8px 12px",
+        fontSize: 14,
+        border: "1px solid #ccc",
+        borderRadius: 4,
+        boxSizing: "border-box" as const,
+        transition: "border-color 0.2s",
+        backgroundColor: "#fff",
+    },
+    textarea: {
+        width: "100%",
+        padding: "8px 12px",
+        fontSize: 14,
+        border: "1px solid #ccc",
+        borderRadius: 4,
+        boxSizing: "border-box" as const,
+        transition: "border-color 0.2s",
+        minHeight: 80,
+        resize: "vertical" as const,
+    },
+    hint: {
+        fontSize: 11,
+        color: "#888",
+        marginTop: 4,
+    },
 } as const
+
+// カード交換の選択肢（AirHamLogのフォームと同じ）
+const CARD_EXCHANGE_OPTIONS = [
+    { value: "", label: "選択してください" },
+    { value: "JARL (Bureau)", label: "JARL (Bureau)" },
+    { value: "No Card", label: "No Card" },
+    { value: "1WAY (当方→先方)", label: "1WAY (当方→先方)" },
+    { value: "1WAY (先方→当方)", label: "1WAY (先方→当方)" },
+    { value: "eQSL", label: "eQSL" },
+]
 
 export default function Options() {
     const [showConfirm, setShowConfirm] = useState(true)
@@ -70,18 +106,21 @@ export default function Options() {
     const [rigName, setRigName] = useState("")
     const [antName, setAntName] = useState("")
     const [antHeight, setAntHeight] = useState("")
+    // AirHamLog連携
+    const [cardExchange, setCardExchange] = useState("")
+    const [cardRemarks, setCardRemarks] = useState("")
 
     useEffect(() => {
         storage.get<boolean>("showConfirm").then((v) => setShowConfirm(v ?? true))
         storage.get<string>("remarks1Text").then((v) => setRemarks1Text(v ?? ""))
-        storage.get<string>("rigName").then((v) => setRigName(v ?? ""))
-        storage.get<string>("antName").then((v) => setAntName(v ?? ""))
-        storage.get<string>("antHeight").then((v) => setAntHeight(v ?? ""))
+        // AirHamLog連携
+        storage.get<string>("cardExchange").then((v) => setCardExchange(v ?? ""))
+        storage.get<string>("cardRemarks").then((v) => setCardRemarks(v ?? ""))
     }, [])
 
     return (
         <div style={styles.container}>
-            <h1 style={styles.header}>HAMLAB Bridge 設定</h1>
+            <h1 style={styles.header}>AirHamLog Bridge 設定</h1>
 
             <div style={styles.card}>
                 <div style={styles.cardTitle}>動作設定</div>
@@ -100,8 +139,41 @@ export default function Options() {
             </div>
 
             <div style={styles.card}>
-                <div style={styles.cardTitle}>固定入力</div>
+                <div style={styles.cardTitle}>ログ設定（AirHamLog連携）</div>
                 <div style={styles.fieldGroup}>
+                    <label style={styles.label}>カード交換</label>
+                    <select
+                        style={styles.select}
+                        value={cardExchange}
+                        onChange={(e) => {
+                            setCardExchange(e.target.value)
+                            storage.set("cardExchange", e.target.value)
+                        }}
+                    >
+                        {CARD_EXCHANGE_OPTIONS.map((opt) => (
+                            <option key={opt.value} value={opt.value}>
+                                {opt.label}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+                <div style={{ ...styles.fieldGroup, marginBottom: 0 }}>
+                    <label style={styles.label}>Remarks（QSLカードに印字されます）</label>
+                    <textarea
+                        style={styles.textarea}
+                        value={cardRemarks}
+                        onChange={(e) => {
+                            setCardRemarks(e.target.value)
+                            storage.set("cardRemarks", e.target.value)
+                        }}
+                        placeholder="例: TNX FB QSO!"
+                    />
+                </div>
+            </div>
+
+            <div style={styles.card}>
+                <div style={styles.cardTitle}>固定入力（メモ欄）</div>
+                <div style={{ ...styles.fieldGroup, marginBottom: 0 }}>
                     <label style={styles.label}>Remarks1</label>
                     <input
                         type="text"
@@ -113,49 +185,9 @@ export default function Options() {
                         }}
                         placeholder="例: FT8 / HAMLAB Bridge"
                     />
-                </div>
-            </div>
-
-            <div style={styles.card}>
-                <div style={styles.cardTitle}>設備情報</div>
-                <div style={styles.fieldGroup}>
-                    <label style={styles.label}>無線機</label>
-                    <input
-                        type="text"
-                        style={styles.input}
-                        value={rigName}
-                        onChange={(e) => {
-                            setRigName(e.target.value)
-                            storage.set("rigName", e.target.value)
-                        }}
-                        placeholder="例: IC-7300"
-                    />
-                </div>
-                <div style={styles.fieldGroup}>
-                    <label style={styles.label}>アンテナ</label>
-                    <input
-                        type="text"
-                        style={styles.input}
-                        value={antName}
-                        onChange={(e) => {
-                            setAntName(e.target.value)
-                            storage.set("antName", e.target.value)
-                        }}
-                        placeholder="例: ZS6BKW"
-                    />
-                </div>
-                <div style={{ ...styles.fieldGroup, marginBottom: 0 }}>
-                    <label style={styles.label}>地上高（m）</label>
-                    <input
-                        type="text"
-                        style={styles.input}
-                        value={antHeight}
-                        onChange={(e) => {
-                            setAntHeight(e.target.value)
-                            storage.set("antHeight", e.target.value)
-                        }}
-                        placeholder="例: 10"
-                    />
+                    <div style={styles.hint}>
+                        毎回メモ欄に自動追加されます
+                    </div>
                 </div>
             </div>
         </div>

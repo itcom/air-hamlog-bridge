@@ -18,7 +18,7 @@ function connect() {
             payload = { adif: e.data }
         }
 
-        chrome.tabs.query({ url: "https://hamlab.jp/*" }, (tabs) => {
+        chrome.tabs.query({ url: "https://air-hamlog.com/*" }, (tabs) => {
             tabs.forEach((tab) => {
                 if (!tab.id) return
                 chrome.tabs.sendMessage(tab.id, payload, () => {
