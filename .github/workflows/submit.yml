@@ -2,9 +2,20 @@ name: "Submit to Web Store"
 
 on:
   workflow_dispatch:
+    inputs:
+      target:
+        description: 'Target store (chrome or firefox or both)'
+        required: true
+        default: 'both'
+        type: choice
+        options:
+          - chrome
+          - firefox
+          - both
 
 jobs:
-  submit:
+  submit-chrome:
+    if: github.event.inputs.target == 'chrome' || github.event.inputs.target == 'both'
     runs-on: ubuntu-latest
 
     steps:
@@ -19,14 +30,44 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Build
+      - name: Build Chrome version
         run: yarn build
 
-      - name: Package
+      - name: Package Chrome version
         run: yarn package
 
-      - name: Submit to Web Store
+      - name: Submit to Chrome Web Store
         uses: PlasmoHQ/bpp@v3
         with:
           keys: ${{ secrets.SUBMIT_KEYS }}
           artifact: build/chrome-mv3-prod.zip
+
+  submit-firefox:
+    if: github.event.inputs.target == 'firefox' || github.event.inputs.target == 'both'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build Firefox version
+        run: yarn build:firefox
+
+      - name: Package Firefox version
+        run: |
+          cd build/firefox-mv2-prod
+          zip -r ../firefox-mv2-prod.zip .
+
+      - name: Submit to Firefox Add-ons
+        uses: PlasmoHQ/bpp@v3
+        with:
+          keys: ${{ secrets.SUBMIT_KEYS }}
+          artifact: build/firefox-mv2-prod.zip

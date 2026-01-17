@@ -24,16 +24,26 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Build
+      - name: Build Chrome version
         run: yarn build
 
-      - name: Create zip
+      - name: Build Firefox version
+        run: yarn build:firefox
+
+      - name: Create Chrome zip
         run: |
           cd build
-          zip -r ../hamlab-bridge-${{ github.ref_name }}.zip chrome-mv3-prod
+          zip -r ../air-hamlog-bridge-${{ github.ref_name }}-chrome.zip chrome-mv3-prod
+
+      - name: Create Firefox zip
+        run: |
+          cd build
+          zip -r ../air-hamlog-bridge-${{ github.ref_name }}-firefox.zip firefox-mv2-prod
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          files: hamlab-bridge-${{ github.ref_name }}.zip
+          files: |
+            air-hamlog-bridge-${{ github.ref_name }}-chrome.zip
+            air-hamlog-bridge-${{ github.ref_name }}-firefox.zip
           generate_release_notes: true

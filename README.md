@@ -1,6 +1,6 @@
 # AirHamLog Bridge
 
-WSJT-X / JTDX から送信される ADIF データを [AirHamLog](https://air-hamlog.com/) に自動入力する Chrome 拡張機能です。
+WSJT-X / JTDX から送信される ADIF データを [AirHamLog](https://air-hamlog.com/) に自動入力するブラウザ拡張機能です。
 
 ## 機能
 
@@ -12,25 +12,31 @@ WSJT-X / JTDX から送信される ADIF データを [AirHamLog](https://air-ha
 - 確認ダイアログの表示/非表示を選択可能
 - カード交換、QSLカード用Remarks、固定メモの自動入力
 
+## 対応ブラウザ
+
+- Chrome / Edge などの Chromium 系ブラウザ
+- Firefox
+
 ## 必要なもの
 
 - HAMLAB Bridge サーバー（`ws://127.0.0.1:17800/ws` で待ち受け）
   - [udp-bridge](https://github.com/itcom/udp-bridge) - WSJT-X/JTDX からの UDP パケットを受信し、WebSocket で配信するサーバー
   - CAT/CI-V 連携にも対応（無線機の周波数・モード取得）
-- Chrome / Edge などの Chromium 系ブラウザ
 
 ## インストール
 
-### リリース版
+### Chrome / Edge
 
-1. [Releases](../../releases) ページから最新の `hamlab-bridge-vX.X.X.zip` をダウンロード
+#### リリース版
+
+1. [Releases](../../releases) ページから最新の `air-hamlog-bridge-vX.X.X-chrome.zip` をダウンロード
 2. zip を展開
 3. Chrome で `chrome://extensions` を開く
 4. 右上の「デベロッパーモード」を有効にする
 5. 「パッケージ化されていない拡張機能を読み込む」をクリック
 6. 展開した `chrome-mv3-prod` フォルダを選択
 
-### 開発版
+#### 開発版
 
 ```bash
 yarn install
@@ -39,13 +45,40 @@ yarn dev
 
 `build/chrome-mv3-dev` をブラウザの拡張機能ページで読み込んでください。
 
-### 本番ビルド
+#### 本番ビルド
 
 ```bash
 yarn build
 ```
 
 `build/chrome-mv3-prod` が生成されます。
+
+### Firefox
+
+#### リリース版
+
+1. [Releases](../../releases) ページから最新の `air-hamlog-bridge-vX.X.X-firefox.zip` をダウンロード
+2. zip を展開
+3. Firefox で `about:debugging#/runtime/this-firefox` を開く
+4. 「一時的なアドオンを読み込む」をクリック
+5. 展開したフォルダ内の `manifest.json` を選択
+
+#### 開発版
+
+```bash
+yarn install
+yarn dev:firefox
+```
+
+`build/firefox-mv2-dev` をFirefoxの拡張機能ページで読み込んでください。
+
+#### 本番ビルド
+
+```bash
+yarn build:firefox
+```
+
+`build/firefox-mv2-prod` が生成されます。
 
 ## 設定
 
